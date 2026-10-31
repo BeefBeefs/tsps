@@ -5,7 +5,7 @@ Every quest the server registers, with the latest result recorded in its page he
 test a quest is in [server/docs/agents/quest-testing.md](../../server/docs/agents/quest-testing.md);
 how to record the result is in [_template/README.md](_template/README.md).
 
-185 quests · ✅ passed: 30 · ⚠️ passed with issues: 22 · 🔄 in progress: 5 · ❌ failed: 1 · 🔁 needs recheck: 7 · untested: 120
+186 quests · ✅ passed: 30 · ⚠️ passed with issues: 22 · 🔄 in progress: 6 · ❌ failed: 1 · 🔁 needs recheck: 7 · untested: 120
 
 "Needs recheck" means the quest's plugin has changed since the commit its result was proven on.
 
@@ -21,6 +21,7 @@ how to record the result is in [_template/README.md](_template/README.md).
 | [Animal Magnetism](animal-magnetism/README.md) | untested |  |  |  |  |
 | [Another Slice of H.A.M.](another-slice-of-ham/README.md) | 🔄 in progress |  | agent |  |  |
 | [At First Light](at-first-light/README.md) | ⚠️ passed with issues |  | agent |  | 1 |
+| [Bear Your Soul](bear-your-soul/README.md) | 🔄 in progress | 2026-10-31 | agent | DeepSeek V4.1 Flash |  |
 | [Below Ice Mountain](below-ice-mountain/README.md) | ⚠️ passed with issues | 2026-10-25 | community |  | 1 |
 | [Beneath Cursed Sands](beneath-cursed-sands/README.md) | untested |  |  |  |  |
 | Between a Rock... | untested |  |  |  |  |
