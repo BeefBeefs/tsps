@@ -5,7 +5,7 @@ Every quest the server registers, with the latest result recorded in its page he
 test a quest is in [server/docs/agents/quest-testing.md](../../server/docs/agents/quest-testing.md);
 how to record the result is in [_template/README.md](_template/README.md).
 
-186 quests · ✅ passed: 30 · ⚠️ passed with issues: 22 · 🔄 in progress: 5 · ❌ failed: 1 · 🔁 needs recheck: 7 · untested: 121
+189 quests · ✅ passed: 31 · ⚠️ passed with issues: 22 · 🔄 in progress: 6 · ❌ failed: 1 · 🔁 needs recheck: 7 · untested: 122
 
 "Needs recheck" means the quest's plugin has changed since the commit its result was proven on.
 
@@ -21,6 +21,7 @@ how to record the result is in [_template/README.md](_template/README.md).
 | [Animal Magnetism](animal-magnetism/README.md) | untested |  |  |  |  |
 | [Another Slice of H.A.M.](another-slice-of-ham/README.md) | 🔄 in progress |  | agent |  |  |
 | [At First Light](at-first-light/README.md) | ⚠️ passed with issues |  | agent |  | 1 |
+| [Bear Your Soul](bear-your-soul/README.md) | 🔄 in progress | 2026-10-31 | agent | DeepSeek V4.1 Flash |  |
 | [Below Ice Mountain](below-ice-mountain/README.md) | ⚠️ passed with issues | 2026-10-25 | community |  | 1 |
 | [Beneath Cursed Sands](beneath-cursed-sands/README.md) | untested |  |  |  |  |
 | Between a Rock... | untested |  |  |  |  |
@@ -59,6 +60,7 @@ how to record the result is in [_template/README.md](_template/README.md).
 | [Elemental Workshop II](elemental-workshop-ii/README.md) | untested |  |  |  |  |
 | [Enakhra's Lament](enakhras-lament/README.md) | untested |  |  |  |  |
 | Enlightened Journey | untested |  |  |  |  |
+| Enter the Abyss | untested |  |  |  |  |
 | [Ernest the Chicken](ernest-the-chicken/README.md) | ✅ passed | 2026-10-25 | community |  |  |
 | [Ethically Acquired Antiquities](ethically-acquired-antiquities/README.md) | untested |  |  |  |  |
 | Fairytale I - Growing Pains | untested |  |  |  |  |
@@ -138,6 +140,7 @@ how to record the result is in [_template/README.md](_template/README.md).
 | [Shield of Arrav](shield-of-arrav/README.md) | ⚠️ passed with issues | 2026-10-25 | community |  | 1 |
 | Shilo Village | untested |  |  |  |  |
 | [Sins of the Father](sins-of-the-father/README.md) | untested |  |  |  |  |
+| [Skippy and the Mogres](skippy-and-the-mogres/README.md) | ✅ passed | 2026-10-31 | agent | deepseek-v4.1-flash | 1 |
 | [Sleeping Giants](sleeping-giants/README.md) | ✅ passed |  | agent |  |  |
 | [Song of the Elves](song-of-the-elves/README.md) | untested |  |  |  |  |
 | [Spirits of the Elid](spirits-of-the-elid/README.md) | untested |  |  |  |  |
@@ -153,8 +156,8 @@ how to record the result is in [_template/README.md](_template/README.md).
 | The Curse of Arrav | untested |  |  |  |  |
 | [The Depths of Despair](the-depths-of-despair/README.md) | ✅ passed | 2026-10-23 | agent |  |  |
 | The Dig Site | untested |  |  |  |  |
-| The Eyes of Glouphrie | untested |  |  |  |  |
 | [The Enchanted Key](the-enchanted-key/README.md) | untested |  |  |  |  |
+| The Eyes of Glouphrie | untested |  |  |  |  |
 | [The Feud](the-feud/README.md) | untested |  |  |  |  |
 | [The Final Dawn](the-final-dawn/README.md) | untested |  |  |  |  |
 | The Forsaken Tower | untested |  |  |  |  |

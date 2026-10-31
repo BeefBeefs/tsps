@@ -21,7 +21,9 @@ const QUESTS = [
   "ColdWar", "Contact", "CooksAssistant", "CorsairCurse",
   "CrabQuest", "CreatureOfFenkenstrain", "CurrentAffairs", "CurseOfArrav",
   "DarknessOfHallowvale", "DeathOnTheIsle", "DeathPlateau", "DeathToTheDorgeshuun",
-  "DefenderOfVarrock", "DemonSlayer", "DepthsOfDespair", "DesertTreasureI", "DesertTreasureII",
+  // BearYourSoul also searches the Arceuus Library shelves; DepthsOfDespair's active
+  // book step must claim that shared search first.
+  "DefenderOfVarrock", "DemonSlayer", "DepthsOfDespair", "BearYourSoul", "DesertTreasureI", "DesertTreasureII",
   "DeviousMinds", "DigSite", "DoricsQuest", "DragonSlayer", "DragonSlayerII",
   "DreamMentor", "DruidicRitual", "DwarfCannon", "EadgarsRuse",
   "EaglesPeak", "ElementalWorkshopI", "ElementalWorkshopII", "EnakhrasLament",
@@ -50,7 +52,7 @@ const QUESTS = [
   "RumDeal", "RuneMysteries", "ScorpionCatcher", "Scrambled",
   "SeaSlug", "SecretsOfTheNorth", "ShadesOfMortton", "ShadowOfTheStorm",
   "ShadowsOfCustodia", "SheepHerder", "SheepShearer", "ShieldOfArrav", "SongOfTheElves",
-  "ShiloVillage", "SleepingGiants", "SlugMenace", "SoulsBane",
+  "ShiloVillage", "SkippyAndTheMogres", "SleepingGiants", "SlugMenace", "SoulsBane",
   "SpiritsOfTheElid", "SwanSong", "TaiBwoWannaiTrio", "TailOfTwoCats",
   "TaleOfTheRighteous", "TasteOfHope", "TearsOfGuthix", "TempleOfIkov", "TempleOfTheEye",
   "TheEnchantedKey", "TheFeud", "TheFinalDawn", "TheFremennikIsles",
@@ -60,6 +62,9 @@ const QUESTS = [
   "VampyreSlayer", "Wanted", "Watchtower", "WaterfallQuest",
   "WhatLiesBelow", "WitchsHouse", "WitchsPotion", "XMarksTheSpot",
   "ZogreFleshEaters",
+  // Enter the Abyss shares the Mage of Zamorak with Temple of the Eye and Wanted.
+  // Registering it last lets their own stage windows claim the shared NPC first.
+  "EnterTheAbyss",
 ]
 
 // Free-to-play quests (OSRS wiki); the rest stay unloaded on a free-to-play world.

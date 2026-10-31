@@ -443,6 +443,17 @@
     "native": false
   },
   {
+    "questKey": "bear_your_soul",
+    "sourceKey": "BearYourSoul",
+    "variants": [
+      {
+        "helperVariant": "BEAR_YOUR_SOUL",
+        "helperClass": "com.questhelper.helpers.quests.bearyoursoul.BearYourSoul"
+      }
+    ],
+    "native": false
+  },
+  {
     "questKey": "desert_treasure_i",
     "sourceKey": "DesertTreasureI",
     "variants": [
@@ -1674,6 +1685,17 @@
     "native": false
   },
   {
+    "questKey": "skippy_and_the_mogres",
+    "sourceKey": "SkippyAndTheMogres",
+    "variants": [
+      {
+        "helperVariant": "SKIPPY_AND_THE_MOGRES",
+        "helperClass": "com.questhelper.helpers.miniquests.skippyandthemogres.SkippyAndTheMogres"
+      }
+    ],
+    "native": false
+  },
+  {
     "questKey": "sleeping_giants",
     "sourceKey": "SleepingGiants",
     "variants": [
@@ -2076,6 +2098,17 @@
       {
         "helperVariant": "ZOGRE_FLESH_EATERS",
         "helperClass": "com.questhelper.helpers.quests.zogreflesheaters.ZogreFleshEaters"
+      }
+    ],
+    "native": false
+  },
+  {
+    "questKey": "enter_the_abyss",
+    "sourceKey": "EnterTheAbyss",
+    "variants": [
+      {
+        "helperVariant": "ENTER_THE_ABYSS",
+        "helperClass": "com.questhelper.helpers.quests.entertheabyss.EnterTheAbyss"
       }
     ],
     "native": false
