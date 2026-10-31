@@ -267,6 +267,11 @@ module.exports = function registerTheEnchantedKeyQuest(api) {
     player.setAttribute(LAST_DISTANCE_ATTRIBUTE, -1);
   }
 
+  /** The login bootstrap re-sends shared varps; restore the 1391 mirror after it. */
+  function handleBootstrap({ player }) {
+    sendSites(player);
+  }
+
   function handleQuestCompleted({ player, key }) {
     if (key !== "making_history") return;
     if (stageOf(player) === STAGE_NOT_STARTED) quest.setStage(player, STAGE_STARTED);
@@ -316,5 +321,6 @@ module.exports = function registerTheEnchantedKeyQuest(api) {
   api.onItemAction("Spade", { Dig: digTreasure });
   api.onPlayerLogin(handleLogin);
   api.onPlayerLogout(handleLogout);
+  api.onCustomEvent("player:bootstrap-complete", handleBootstrap);
   api.onCustomEvent("quest:completed", handleQuestCompleted);
 };
