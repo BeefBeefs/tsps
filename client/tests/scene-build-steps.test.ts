@@ -117,3 +117,42 @@ test("pool skips cancelled queued jobs and forwards cancellation to a running wo
     await assert.rejects(pending, { name: "AbortError" });
     assert.equal(cancelId, requestId, "only the dispatched job is cancelled");
 });
+
+test("a blended instance floor is drawn although the map has no underlay", async () => {
+    const { CacheSystem } = await import("../rs/cache/CacheSystem");
+    const { getCacheLoaderFactory } = await import("../rs/cache/loader/CacheLoaderFactory");
+    const { LocModelLoader } = await import("../rs/config/loctype/LocModelLoader");
+    const { SceneBuilder } = await import("../rs/scene/SceneBuilder");
+    const { loadCache, loadCacheInfos, loadCacheList } = await import("../scripts/cache/load-util");
+    const cache = loadCache(loadCacheList(loadCacheInfos()).latest);
+    const cacheSystem = CacheSystem.fromFiles(cache.info, cache.files);
+    const factory = getCacheLoaderFactory(cache.info, cacheSystem);
+    const locTypeLoader = factory.getLocTypeLoader(), textureLoader = factory.getTextureLoader();
+    const locModelLoader = new LocModelLoader(locTypeLoader, factory.getModelLoader(), textureLoader,
+        factory.getSeqTypeLoader(), factory.getSeqFrameLoader(), factory.getSkeletalSeqLoader());
+    const sceneBuilder = new SceneBuilder(cache.info, factory.getMapFileLoader(), factory.getUnderlayTypeLoader(),
+        factory.getOverlayTypeLoader(), locTypeLoader, locModelLoader, cache.xteas);
+
+    // The Ancient Vault's instance palette (DesertTreasureII.Quest.js): plane 1 of
+    // cache chunks 490..493 x 1202..1205 into the first 4x4 chunks of the scene.
+    // Its floor overlays use the 0xFF00FF blend sentinel and the map has no
+    // underlay, so the secondary colour is the only ground colour that exists.
+    const pack = (plane: number, chunkX: number, chunkY: number) =>
+        ((plane & 3) << 24) | ((chunkX & 0x3ff) << 14) | ((chunkY & 0x7ff) << 3);
+    const palette: number[][][] = Array.from({ length: 4 }, () =>
+        Array.from({ length: 13 }, () => new Array<number>(13).fill(-1)));
+    for (let x = 0; x < 4; x++) for (let y = 0; y < 4; y++) palette[1][x][y] = pack(1, 490 + x, 1202 + y);
+
+    const scene: Scene = await finishBuild(
+        sceneBuilder.buildInstanceSceneSteps(palette, 0, 0, 104, 104, false));
+    assert.ok(scene.tiles[1][20][20]?.tileModel?.faces.length! > 0,
+        "the vault floor tile draws its secondary colour instead of staying a hole");
+    assert.equal(scene.tiles[1][0][0]?.tileModel?.faces.length ?? 0, 0,
+        "the sentinel-only void around the room stays empty");
+
+    const terrain = new SceneBuffer(textureLoader, new Map(), 100000);
+    assert.ok(terrain.addTerrain(scene, 0, 3, 104, 0) > 0,
+        "the instance's floor reaches the terrain mesh");
+    assert.ok(terrain.drawCommands.some(command => command.instances[0].level === 1),
+        "the floor is drawn on the instance's own plane");
+});
