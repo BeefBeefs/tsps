@@ -24,6 +24,7 @@ import { Model } from "../model/Model";
 import { HSL_RGB_MAP, adjustOverlayLight, adjustUnderlayLight, packHsl } from "../util/ColorUtil";
 import { generateHeight } from "../util/HeightCalc";
 import { CollisionMap } from "./CollisionMap";
+import { overlayFloorHsl } from "./OverlayFloorColour";
 import { Scene } from "./Scene";
 import { SceneTileModel } from "./SceneTileModel";
 import { Entity } from "./entity/Entity";
@@ -1622,14 +1623,8 @@ export class SceneBuilder {
                                 overlay.textureId,
                             );
                             overlayHsl = -1;
-                        } else if (overlay.primaryRgb === 0xff00ff) {
-                            overlayHsl = overlayMinimapHsl = -2;
                         } else {
-                            overlayHsl = overlayMinimapHsl = packHsl(
-                                overlay.hue,
-                                overlay.saturation,
-                                overlay.lightness,
-                            );
+                            overlayHsl = overlayMinimapHsl = overlayFloorHsl(overlay);
                         }
 
                         if (overlay.secondaryRgb !== -1) {
