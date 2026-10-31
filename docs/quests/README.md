@@ -5,7 +5,7 @@ Every quest the server registers, with the latest result recorded in its page he
 test a quest is in [server/docs/agents/quest-testing.md](../../server/docs/agents/quest-testing.md);
 how to record the result is in [_template/README.md](_template/README.md).
 
-185 quests · ✅ passed: 30 · ⚠️ passed with issues: 22 · 🔄 in progress: 5 · ❌ failed: 1 · 🔁 needs recheck: 7 · untested: 120
+186 quests · ✅ passed: 30 · ⚠️ passed with issues: 22 · 🔄 in progress: 5 · ❌ failed: 1 · 🔁 needs recheck: 7 · untested: 121
 
 "Needs recheck" means the quest's plugin has changed since the commit its result was proven on.
 
@@ -154,6 +154,7 @@ how to record the result is in [_template/README.md](_template/README.md).
 | [The Depths of Despair](the-depths-of-despair/README.md) | ✅ passed | 2026-10-23 | agent |  |  |
 | The Dig Site | untested |  |  |  |  |
 | The Eyes of Glouphrie | untested |  |  |  |  |
+| [The Enchanted Key](the-enchanted-key/README.md) | untested |  |  |  |  |
 | [The Feud](the-feud/README.md) | untested |  |  |  |  |
 | [The Final Dawn](the-final-dawn/README.md) | untested |  |  |  |  |
 | The Forsaken Tower | untested |  |  |  |  |

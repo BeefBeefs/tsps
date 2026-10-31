@@ -25,7 +25,8 @@
  * Melina/Droalak presence is driven through their multi-NPC transform varbits
  * (1387/1388), so they vanish for the player without touching the shared
  * spawn. 1390 objloc is set to 1 on completion (the outpost becomes the
- * museum); 1391 locstatus stays unset (the enchanted-key digs are post-quest).
+ * museum); 1391 locstatus is written by The Enchanted Key miniquest, which
+ * owns the post-quest treasure digs.
  *
  * Rewards per the OSRS Wiki: 3 Quest points, 1,000 Crafting XP, 1,000 Prayer XP,
  * 750 coins, the enchanted key and access to the outpost museum. The key is
@@ -37,7 +38,7 @@
  * through public quest queries; the outpost museum swap itself (the objects
  * behind objloc 1390) is not simulated, but the native 1390 switch is set on
  * completion; the key's
- * post-quest treasure digs (The Enchanted Key miniquest) are not implemented;
+ * post-quest treasure digs live in TheEnchantedKey.Quest.js;
  * the master-clue condition is answered false; Dron's "North West side of town"
  * wrong answer is a transcript "unavailable" marker and closes silently;
  * the dig spot tolerates one tile around

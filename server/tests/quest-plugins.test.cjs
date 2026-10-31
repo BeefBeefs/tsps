@@ -21952,3 +21952,175 @@ test('a quest not started yet opens the overview with its start sentence', () =>
   // A quest's not-started journal line ("I can start this quest by ...") or the start text file gives it.
   assert.deepEqual(withoutOverview, [], 'quests with no start sentence or no cache quest row');
 });
+
+test('The Enchanted Key follows the Wiki hot/cold readings, starts at Rellekka and pays every site once', () => {
+  const { api, handlers } = mockApi();
+  const attributes = new Map();
+  const varbits = new Map();
+  const inventory = new Map();
+  const messages = [];
+  let location = new api.core.Location(2716, 3606, 0);
+  let makingHistoryDone = true;
+  api.emitCustomEvent = (name, event) => {
+    if (name === 'quest:is-complete' && event.key === 'making_history') event.complete = makingHistoryDone;
+  };
+  require('../plugins/quests/quests/TheEnchantedKey.Quest')(api);
+  const quest = require('../plugins/quests/QuestRuntime').getRegisteredQuests()
+    .filter((entry) => entry.key === 'the_enchanted_key').at(-1);
+  const sender = new Proxy({}, {
+    get: (_target, key) => {
+      if (key === 'sendVarbit') return (id, value) => varbits.set(id, value);
+      if (key === 'getVarbit') return (id) => varbits.get(id) ?? 0;
+      return () => sender;
+    },
+  });
+  const player = {
+    getAttribute: (key) => attributes.get(key),
+    setAttribute: (key, value) => attributes.set(key, value),
+    getLocation: () => location,
+    getInventory: () => ({
+      getAmount: (id) => inventory.get(id) ?? 0,
+      adds: (id, amount) => inventory.set(id, (inventory.get(id) ?? 0) + amount),
+      isFull: () => false,
+      getFreeSlots: () => 28,
+    }),
+    getBanks: () => [{ getAmount: () => 0 }],
+    getPacketSender: () => sender,
+    getSkillManager: () => ({ getCombatLevel: () => 3, getMaxLevel: () => 1, getCurrentLevel: () => 1 }),
+    getEquipment: () => ({ contains: () => false }),
+    sendMessage: (message) => messages.push(message),
+    performAnimation: () => {},
+    isRegistered: () => true,
+  };
+  const feel = handlers.namedItemActions.get('Enchanted key').Feel;
+  const dig = handlers.namedItemActions.get('Spade').Dig;
+  const at = (x, y) => { location = new api.core.Location(x, y, 0); };
+  const feelAt = (x, y) => {
+    at(x, y);
+    const event = { player, itemId: api.core.ItemIdentifiers.ENCHANTED_KEY, option: 'Feel', handled: false };
+    feel(event);
+    return event;
+  };
+  const digAt = (x, y) => {
+    at(x, y);
+    const event = { player, itemId: api.core.ItemIdentifiers.SPADE, option: 'Dig', handled: false };
+    dig(event);
+    return event;
+  };
+
+  // Nothing is handed out before Making History; the key itself does not respond.
+  makingHistoryDone = false;
+  inventory.set(api.core.ItemIdentifiers.ENCHANTED_KEY, 1);
+  inventory.set(api.core.ItemIdentifiers.SPADE, 1);
+  assert.equal(feelAt(2716, 3606).handled, false);
+  assert.equal(digAt(2716, 3606).handled, false);
+  assert.deepEqual(messages, []);
+
+  makingHistoryDone = true;
+  attributes.set('quest.making_history.stage', 2);
+  assert.equal(feelAt(2716, 3606).handled, true);
+  assert.equal(messages.at(-1), 'The key is steaming. It must be right below your feet.');
+  assert.equal(attributes.get('quest.the_enchanted_key.stage'), 1, 'feeling the key starts the miniquest');
+
+  feelAt(2726, 3606);
+  assert.equal(messages.at(-1), "Ouch! It's burning hot but colder than last time.");
+  feelAt(2721, 3606);
+  assert.equal(messages.at(-1), "Ouch! It's burning hot and warmer than last time.");
+  feelAt(2721, 3606);
+  assert.equal(messages.at(-1), "Ouch! It's burning hot and the same temperature as last time.");
+
+  const wrongSpot = digAt(2740, 3606);
+  assert.equal(wrongSpot.handled, false, 'digging away from the treasure is left to the normal spade');
+  assert.equal(inventory.get(api.core.ItemIdentifiers.STEEL_ARROW) ?? 0, 0);
+  assert.equal(varbits.get(1391) ?? 0, 0);
+
+  // The Wiki's first treasure is always south of Rellekka.
+  assert.equal(digAt(2716, 3606).handled, true);
+  assert.equal(attributes.get('quest.enchanted_key.dug'), 1);
+  assert.equal(varbits.get(1391), 1);
+  assert.equal(quest.getStage(player), 1);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.STEEL_ARROW), 20);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.MITHRIL_ORE), 10);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.LAW_RUNE), 15);
+
+  // The remaining ten are a saved random order; dig where the key points.
+  const sites = [
+    [2716, 3606], [3299, 3349], [2972, 3304], [3291, 3220], [3161, 3176],
+    [3160, 3490], [3033, 3437], [2417, 3382], [3016, 3166], [2621, 3239], [2448, 3443],
+  ];
+  for (let found = 1; found < sites.length; found++) {
+    // Feeling the key assigns the next saved site; the player then walks there.
+    feelAt(2716, 3606);
+    const index = Number(attributes.get('quest.enchanted_key.site'));
+    assert.ok(index >= 1 && index < sites.length, `next site is one of the ten random sites (got ${index})`);
+    const [x, y] = sites[index];
+    assert.equal(digAt(x, y).handled, true);
+    assert.equal(attributes.get('quest.enchanted_key.site'), -1);
+  }
+
+  assert.equal(varbits.get(1391), 2047, 'the eleven dug bits are the value Quest Helper reads');
+  assert.equal(quest.getStage(player), 2);
+  assert.equal(messages.filter((message) => message.startsWith("Congratulations, you've completed a quest:")).length, 1);
+
+  // Wiki reward totals across all eleven sites.
+  assert.equal(inventory.get(api.core.ItemIdentifiers.IRON_ORE), 60);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.MITHRIL_ORE), 30);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.PURE_ESSENCE), 263);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.MIND_RUNE), 20);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.EARTH_RUNE), 60);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.FIRE_RUNE), 50);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.WATER_RUNE), 30);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.LAW_RUNE), 30);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.DEATH_RUNE), 15);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.IRON_ARROW), 20);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.STEEL_ARROW), 40);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.MITHRIL_ARROW), 30);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.IRON_ARROWTIPS), 40);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.SARADOMIN_MJOLNIR), 1);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.GUTHIX_MJOLNIR), 1);
+  assert.equal(inventory.get(api.core.ItemIdentifiers.ZAMORAK_MJOLNIR), 1);
+
+  // After all eleven the key is spent: no more reading and no more loot.
+  const before = new Map(inventory);
+  assert.equal(digAt(2716, 3606).handled, false);
+  assert.deepEqual(inventory, before);
+  feelAt(2716, 3606);
+  assert.equal(messages.at(-1), 'The key is cold and lifeless; it has no more treasure to find.');
+});
+
+test('The Enchanted Key starts on login once Making History is finished and the key is owned', () => {
+  const { api, handlers } = mockApi();
+  const attributes = new Map([['quest.making_history.stage', 2]]);
+  const varbits = new Map();
+  const inventory = new Map([[api.core.ItemIdentifiers.ENCHANTED_KEY, 1]]);
+  api.emitCustomEvent = (name, event) => {
+    if (name === 'quest:is-complete' && event.key === 'making_history') event.complete = true;
+  };
+  require('../plugins/quests/quests/TheEnchantedKey.Quest')(api);
+  const quest = require('../plugins/quests/QuestRuntime').getRegisteredQuests()
+    .filter((entry) => entry.key === 'the_enchanted_key').at(-1);
+  const sender = new Proxy({}, {
+    get: (_target, key) => {
+      if (key === 'sendVarbit') return (id, value) => varbits.set(id, value);
+      return () => sender;
+    },
+  });
+  const player = {
+    getAttribute: (key) => attributes.get(key),
+    setAttribute: (key, value) => attributes.set(key, value),
+    getInventory: () => ({ getAmount: (id) => inventory.get(id) ?? 0 }),
+    getBanks: () => [{ getAmount: () => 0 }],
+    getPacketSender: () => sender,
+    getSkillManager: () => ({ getCombatLevel: () => 3, getMaxLevel: () => 1, getCurrentLevel: () => 1 }),
+    getEquipment: () => ({ contains: () => false }),
+    sendMessage: () => {},
+  };
+  handlers.playerLogin.find((handler) => handler.name === 'handleLogin')({ player });
+  assert.equal(quest.getStage(player), 1);
+  assert.equal(varbits.get(1391), 0);
+
+  attributes.set('quest.the_enchanted_key.stage', 0);
+  inventory.clear();
+  handlers.playerLogin.find((handler) => handler.name === 'handleLogin')({ player });
+  assert.equal(quest.getStage(player), 0, 'a player who has lost the key stays unstarted until reclaiming it');
+});

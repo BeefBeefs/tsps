@@ -916,6 +916,17 @@
     "native": false
   },
   {
+    "questKey": "his_faithful_servants",
+    "sourceKey": "HisFaithfulServants",
+    "variants": [
+      {
+        "helperVariant": "HIS_FAITHFUL_SERVANTS",
+        "helperClass": "com.questhelper.helpers.miniquests.hisfaithfulservants.HisFaithfulServants"
+      }
+    ],
+    "native": false
+  },
+  {
     "questKey": "holy_grail",
     "sourceKey": "HolyGrail",
     "variants": [
@@ -1790,6 +1801,17 @@
       {
         "helperVariant": "TEMPLE_OF_THE_EYE",
         "helperClass": "com.questhelper.helpers.quests.templeoftheeye.TempleOfTheEye"
+      }
+    ],
+    "native": false
+  },
+  {
+    "questKey": "the_enchanted_key",
+    "sourceKey": "TheEnchantedKey",
+    "variants": [
+      {
+        "helperVariant": "ENCHANTED_KEY",
+        "helperClass": "com.questhelper.helpers.miniquests.enchantedkey.EnchantedKey"
       }
     ],
     "native": false

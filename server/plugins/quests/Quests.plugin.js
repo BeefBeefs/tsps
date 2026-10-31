@@ -53,7 +53,7 @@ const QUESTS = [
   "ShiloVillage", "SleepingGiants", "SlugMenace", "SoulsBane",
   "SpiritsOfTheElid", "SwanSong", "TaiBwoWannaiTrio", "TailOfTwoCats",
   "TaleOfTheRighteous", "TasteOfHope", "TearsOfGuthix", "TempleOfIkov", "TempleOfTheEye",
-  "TheFeud", "TheFinalDawn", "TheFremennikIsles",
+  "TheEnchantedKey", "TheFeud", "TheFinalDawn", "TheFremennikIsles",
   "TheGolem", "TheHeartOfDarkness", "ThroneOfMiscellania", "TouristTrap",
   "TowerOfLife", "TreeGnomeVillage", "TribalTotem", "TrollRomance",
   "TrollStronghold", "TroubledTortugans", "TwilightPromise", "UndergroundPass",
