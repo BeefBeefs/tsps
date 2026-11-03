@@ -10,6 +10,8 @@ Server.installProductionPathResolver();
 const { WeaponInterfaces } = require("../dist/game/content/combat/WeaponInterfaces");
 const { FightType } = require("../dist/game/content/combat/FightType");
 const { FightStyle } = require("../dist/game/content/combat/FightStyle");
+const { CombatType } = require("../dist/game/content/combat/CombatType");
+const { Skill } = require("../dist/game/model/Skill");
 const { loadCombatStyleDefinitions } = require("../dist/game/content/combat/CombatStyleDefinitions");
 const { RangedWeapon, Ammunition, RangedWeaponType } = require("../dist/game/content/combat/ranged/RangedData");
 const { ItemIdentifiers } = require("../dist/util/ItemIdentifiers");
@@ -120,3 +122,46 @@ test("chinchompas throw and block with their own animations", async () => {
     assert.equal(byId.get(id).blockAnim, 3176, `item ${id} blocks with human_chinchompa_defend`);
   }
 });
+
+// Regression for #1999: Lunge trains what its own weapon family trains. A stab sword's
+// Lunge is Aggressive (Strength); only scimitars, longswords, spears/hastae, halberds (Jab),
+// maces (Spike), claws and whips (Lash) have a shared-XP Lunge-like style.
+test("Lunge trains the skill its own weapon family trains, not a shared style", () => {
+  const trained = (weapon, slot, combatType = CombatType.MELEE) =>
+    weapon
+      .getFightType()[slot]
+      .getStyle()
+      .skill(combatType)
+      .map((index) => Skill.values()[index].getName());
+
+  // The bronze sword (1277) is a stab sword.
+  assert.equal(byId.get(1277)?.weaponInterface, "SWORD");
+  for (const [name, slot] of [
+    ["SWORD", 1],
+    ["DAGGER", 1],
+    ["DRAGON_DAGGER", 1],
+    ["ABYSSAL_DAGGER", 1],
+    ["GHRAZI_RAPIER", 1],
+    ["FANG", 1],
+  ]) {
+    assert.deepEqual(trained(WeaponInterfaces[name], slot), ["Strength"], `${name} Lunge`);
+  }
+
+  // These families' shared style is the one with "Lunge", "Jab", "Spike" or "Lash".
+  for (const [name, slot] of [
+    ["SCIMITAR", 2],
+    ["LONGSWORD", 2],
+    ["SPEAR", 0],
+    ["HALBERD", 0],
+    ["MACE", 2],
+    ["CLAWS", 2],
+    ["WHIP", 1],
+  ]) {
+    assert.deepEqual(
+      trained(WeaponInterfaces[name], slot),
+      ["Attack", "Strength", "Defence"],
+      `${name} shared style`,
+    );
+  }
+});
+

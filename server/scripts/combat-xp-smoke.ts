@@ -24,6 +24,7 @@ function run(combatType: CombatType, skillIndices: number[], damage: number, pre
         getSkills: () => skillIndices,
         getCombatType: () => combatType,
         isAccurate: () => true,
+        getCombatMethod: () => null,
     };
     CombatFactory.rewardExp(player as any, hit as any);
     return grants;
@@ -90,6 +91,8 @@ const clickStyle = (weapon: WeaponInterfaces, slot: number, combatType: CombatTy
         getEquipment: () => ({ hasStaffEquipped: () => weapon === WeaponInterfaces.STAFF }),
         getCombat: () => ({ getAutocastSpell: () => null }),
         getPacketSender: () => ({ sendConfig() { return this; }, sendVarbit() { return this; } }),
+        getAttribute: () => undefined,
+        setAttribute: () => {},
     };
     assert.equal(WeaponInterfaceManager.changeCombatStyle(player, slot), true);
     return player.getFightType().getStyle().skill(combatType);
