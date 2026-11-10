@@ -52,7 +52,7 @@ test("max hits below the threshold keep the ordinary splat", () => {
   assert.equal(typeFor(player, new HitDamage(30, HitMask.RED).setRolledMaximum(30).setSource(player)), 43);
 });
 
-test("the threshold row asks for a number, saves it (at most 511) and sends it again on login", () => {
+test("the threshold row asks for a number, saves it (2-500) and sends it again on login", () => {
   const player = createPlayer();
   const request = { player, settingId: 280, handled: false };
   settingClicked(request);
@@ -63,10 +63,16 @@ test("the threshold row asks for a number, saves it (at most 511) and sends it a
   assert.deepEqual(player.log, ["varbit 14195=40", "varbit 16075=0", "varbit 12393=0"]);
   settingClicked({ player, settingId: 280, handled: false });
   player.answer(9999);
-  assert.equal(player.getAttribute("settings.max-hit-hitsplat-threshold"), 511);
+  assert.equal(player.getAttribute("settings.max-hit-hitsplat-threshold"), 500);
   player.log.length = 0;
   restore({ player });
-  assert.deepEqual(player.log, ["varbit 14195=511"]);
+  assert.deepEqual(player.log, ["varbit 14195=500"]);
+  settingClicked({ player, settingId: 280, handled: false });
+  player.answer(0);
+  assert.equal(player.getAttribute("settings.max-hit-hitsplat-threshold"), 2, "at least 2");
+  const fresh = createPlayer();
+  restore({ player: fresh });
+  assert.deepEqual(fresh.log, ["varbit 14195=15"], "a new account starts at 15, as live");
   const other = { player, settingId: 1, handled: false };
   settingClicked(other);
   assert.equal(other.handled, false);
